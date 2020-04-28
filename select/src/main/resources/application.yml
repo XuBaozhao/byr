@@ -1,0 +1,17 @@
+eureka:
+ client:
+  service-url:
+   defaultZone: http://localhost:8761/eureka/
+
+server:
+ port: 8767
+
+spring:
+ application:
+  name: select_from_es
+#  thymeleaf:
+#    prefix: classpath:/templates/
+#    suffix: .html
+#    mode: HTML5
+#    encoding: UTF-8
+
