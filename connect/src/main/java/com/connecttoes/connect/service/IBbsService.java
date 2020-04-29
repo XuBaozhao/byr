@@ -13,7 +13,7 @@ public interface IBbsService {
 
     Optional<Bbs> findByBbsId(String BbsId);
 
-    Optional<Bbs> findByBbsTitle(String title);
+    Page<Bbs> findByBbsTitle(String title, Pageable pageable);
 
-//    Page<Bbs> findBbsByTitle(String Title);
+//    Page<Bßbs> findBbsByTitle(String Title);
 }

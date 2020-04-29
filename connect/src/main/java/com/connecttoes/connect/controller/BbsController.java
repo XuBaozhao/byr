@@ -7,7 +7,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,18 +37,24 @@ public class BbsController {
     }
 
     @ApiOperation(value = "按照Id查询数据", notes = "findById接口")
-    @GetMapping("findById")
+    @GetMapping("/findById")
     public ResponseEntity<Optional<Bbs>> findById(@RequestParam("id") String id){
-        Optional<Bbs> data = bbsService.findByBbsId("GJH8v3EBPBUQsCtv2S3D");
+        Optional<Bbs> data = bbsService.findByBbsId(id);
         System.out.println(data);
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 
-    @GetMapping("findByTitle")
-    public ResponseEntity<Optional<Bbs>> findByTitle(@RequestParam("title") String title){
-        Optional<Bbs> data = bbsService.findByBbsTitle(title);
+    @ApiOperation(value = "按照Title查询数据", notes = "findById接口")
+    @GetMapping("/findByTitle")
+    public ResponseEntity<Page<Bbs>> findByTitle(@RequestParam("title") String title){
+       // Pageable pageable = new PageRequest(0,3);
+        Pageable pageable = PageRequest.of(0,3);
+        Page<Bbs> data = bbsService.findByBbsTitle("【内推】【快手-海外事业部】全球化内容运营", pageable);
         System.out.println(title);
         System.out.println(data);
+        for(Bbs bbs: data){
+            System.out.println(bbs);
+        }
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 

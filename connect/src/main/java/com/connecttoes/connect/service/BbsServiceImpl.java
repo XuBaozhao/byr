@@ -3,6 +3,8 @@ package com.connecttoes.connect.service;
 import com.connecttoes.connect.bean.Bbs;
 import com.connecttoes.connect.dao.BbsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -42,15 +44,16 @@ public class BbsServiceImpl implements IBbsService{
     }
 
     @Override
-    public Optional<Bbs> findByBbsTitle(String title) {
-        Optional<Bbs> optionalBbs;
+    public Page<Bbs> findByBbsTitle(String title, Pageable pageable) {
+        Page<Bbs> optionalBbs = null;
         try {
-            optionalBbs = bbsRepository.findBbsByTitle(title);
+            optionalBbs = bbsRepository.findBbsByTitle(title, pageable);
         }catch (Exception e){
-            return Optional.empty();
         }
         return optionalBbs;
     }
+
+
 
 //    @Override
 //    public Page<Bbs> findBbsByTitle(String Title) {
