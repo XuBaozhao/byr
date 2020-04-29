@@ -16,15 +16,32 @@ import java.util.Optional;
 @Repository
 public interface BbsRepository extends ElasticsearchRepository<Bbs, String > {
 
-    //@Query("{\"query\":{\"match\":{\"title\":{\"【社招】【中国信息通信研究院】C  高级研发工程师\"}}}}")
+
+    // 按title查询
     @Query("{\"bool\" : {\"must\" : {\"match\" :{\"title\": \"?0\"}}}}")
     Page<Bbs> findBbsByTitle(String title, Pageable pageable);
 
-//    @Query("{\"query\":{\"match_all\":{}}}")
-//    Iterable<Bbs> findAll();
 
+    // 传入content，从title和content中查找
+//    @Query("{\n" +
+//            "        \"bool\": {\n" +
+//            "            \"must\": {\n" +
+//            "                \"match\": {\n" +
+//            "                    \"content\": { \n" +
+//            "                        \"query\":    \"full text search\",\n" +
+//            "                        \"operator\": \"and\"\n" +
+//            "                    }\n" +
+//            "                }\n" +
+//            "            },\n" +
+//            "            \"should\": [ \n" +
+//            "                { \"match\": { \"content\": \"?0\" }},\n" +
+//            "                { \"match\": { \"title\": \"?0\"        }}\n" +
+//            "            ]\n" +
+//            "        }\n" +
+//            "    }")
 
-//    @Override
-//    @Query("{\"query\":{\"match_all\":{}}}")
-//    Iterable<Bbs> findAll();
+    @Query("{\"bool\" : {\"must\" : {\"match\" : {\"content\" : {\"query\" : \"full text search\", \"operator\" : \"or\"}}}," +
+            "\"should\" : [{\"match\" :{\"content\" : \"?0\"}}, {\"match\" : {\"title\" : \"?0\"}}]}}")
+    Page<Bbs> findByContentAndTitle(String cnt, Pageable pageable);
+
 }

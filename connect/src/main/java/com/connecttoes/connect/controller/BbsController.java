@@ -58,10 +58,21 @@ public class BbsController {
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 
-//    @GetMapping("findByTitle")
-//    public ResponseEntity<Page<Bbs>> findBbsByTitle(@RequestParam("title") String title){
-//        Page<Bbs> page  = bbsService.findBbsByTitle(title);
-//        return new ResponseEntity<>(page, HttpStatus.OK);
-//    }
+    @ApiOperation(value = "在Title和Content中查找数据", notes = "findByContentAndTitle接口")
+    @GetMapping("/findByContentAndTitle")
+    public ResponseEntity<Page<Bbs>> findByContentAndTitle(@RequestParam("cnt") String cnt){
+        Pageable pageable = PageRequest.of(0,3);
+        Page<Bbs> data = bbsService.findByContentAndTitle(cnt, pageable);
+        System.out.println(cnt);
+        System.out.println(data);
+
+        for(Bbs bbs: data){
+            System.out.println();
+            System.out.println(bbs);
+            System.out.println();
+        }
+        return new ResponseEntity<>(data, HttpStatus.OK);
+    }
+
 
 }

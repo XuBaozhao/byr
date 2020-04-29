@@ -15,5 +15,5 @@ public interface IBbsService {
 
     Page<Bbs> findByBbsTitle(String title, Pageable pageable);
 
-//    Page<Bßbs> findBbsByTitle(String Title);
+    Page<Bbs> findByContentAndTitle(String cnt, Pageable pageable);
 }

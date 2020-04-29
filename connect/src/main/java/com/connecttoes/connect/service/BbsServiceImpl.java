@@ -53,6 +53,15 @@ public class BbsServiceImpl implements IBbsService{
         return optionalBbs;
     }
 
+    @Override
+    public Page<Bbs> findByContentAndTitle(String cnt, Pageable pageable) {
+        Page<Bbs> optionalBbs = null;
+        try {
+            optionalBbs = bbsRepository.findByContentAndTitle(cnt, pageable);
+        }catch (Exception e){
+        }
+        return optionalBbs;
+    }
 
 
 //    @Override
