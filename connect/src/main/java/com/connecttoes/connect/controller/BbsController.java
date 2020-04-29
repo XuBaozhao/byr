@@ -3,6 +3,8 @@ package com.connecttoes.connect.controller;
 import com.connecttoes.connect.bean.Bbs;
 import com.connecttoes.connect.service.BbsServiceImpl;
 import com.connecttoes.connect.service.IBbsService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
+@Api(description = "Bbs查询接口")
 @RestController
 @RequestMapping("/bbs")
 public class BbsController {
@@ -22,6 +25,7 @@ public class BbsController {
     @Autowired
     BbsServiceImpl bbsService;
 
+    @ApiOperation(value = "查询所有数据", notes = "findAll接口")
     @GetMapping("/findAll")
     public ResponseEntity<Iterable<Bbs>> findAllBbs(){
         System.out.println("查找数据");
@@ -30,6 +34,7 @@ public class BbsController {
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "按照Id查询数据", notes = "findById接口")
     @GetMapping("findById")
     public ResponseEntity<Optional<Bbs>> findById(@RequestParam("id") String id){
         Optional<Bbs> data = bbsService.findByBbsId("GJH8v3EBPBUQsCtv2S3D");
