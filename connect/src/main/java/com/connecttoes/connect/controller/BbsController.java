@@ -44,7 +44,7 @@ public class BbsController {
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "按照Title查询数据", notes = "findById接口")
+    @ApiOperation(value = "按照Title查询数据", notes = "findByTitle接口")
     @GetMapping("/findByTitle")
     public ResponseEntity<Page<Bbs>> findByTitle(@RequestParam("title") String title){
        // Pageable pageable = new PageRequest(0,3);
