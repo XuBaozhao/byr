@@ -5,6 +5,7 @@ import com.connecttoes.connect.service.BbsServiceImpl;
 import com.connecttoes.connect.service.IBbsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Optional;
 
 @Api(description = "Bbs查询接口")
@@ -100,6 +102,44 @@ public class BbsController {
             System.out.println();
         }
         return new ResponseEntity<>(data, HttpStatus.OK);
+    }
+
+    /**
+     * 热搜功能，取回复数最多的十个帖子
+     *
+     * @return
+     */
+    @ApiOperation(value = "热搜接口", notes = "getHotTopics接口")
+    @GetMapping("/getHotTopics")
+    public ResponseEntity<Page<Bbs>> getHotTopics(){
+        Iterable<Bbs> data = bbsService.findHotTopics();
+        return new ResponseEntity(data, HttpStatus.OK);
+    }
+
+    /**
+     * 将查询结果按照 最新回复时间排序
+     *
+     * @param keywords 搜索关键词
+     * @param pageindex 页码
+     * @param pageSize  每页多少条
+     * @param orderIndex 排序方式 1---正序
+     *              2---倒序
+     * @return
+     */
+    @ApiOperation(value = "按照最新回复时间排序", notes = "orderByLatestReplyTime接口")
+    @GetMapping("/orderByLatestReplyTime")
+    public List<Bbs> orderByLatestReplyTime(@RequestParam String keywords,
+                                            @RequestParam int pageindex,
+                                            @RequestParam int pageSize, @RequestParam int orderIndex) {
+        //排序方式
+        SortOrder order = orderIndex == 1 ? SortOrder.DESC : SortOrder.ASC;
+        //页码，页面容量
+        pageindex = pageindex == 0 ? 1 : pageindex;
+        pageSize = pageSize == 0 ? 10 : pageSize;
+
+        Page<Bbs> searchResponse = bbsService.orderByLatestReplyTime(keywords,pageindex,pageSize,order);
+
+        return searchResponse.getContent();
     }
 
 
