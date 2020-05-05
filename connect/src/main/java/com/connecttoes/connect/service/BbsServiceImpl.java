@@ -63,6 +63,16 @@ public class BbsServiceImpl implements IBbsService{
         return optionalBbs;
     }
 
+    @Override
+    public Page<Bbs> findByContentAndTitleAndSend_time(String keyword, String foretime, String posttime, Pageable pageable) {
+        Page<Bbs> optionalBbs = null;
+        try {
+            optionalBbs = bbsRepository.findByContentAndTitleAndSend_time(keyword, foretime, posttime, pageable);
+        }catch (Exception e){
+        }
+        return optionalBbs;
+    }
+
 
 //    @Override
 //    public Page<Bbs> findBbsByTitle(String Title) {

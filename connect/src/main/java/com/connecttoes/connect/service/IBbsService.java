@@ -16,4 +16,6 @@ public interface IBbsService {
     Page<Bbs> findByBbsTitle(String title, Pageable pageable);
 
     Page<Bbs> findByContentAndTitle(String cnt, Pageable pageable);
+
+    Page<Bbs> findByContentAndTitleAndSend_time(String keyword, String foretime, String posttime, Pageable pageable);
 }
