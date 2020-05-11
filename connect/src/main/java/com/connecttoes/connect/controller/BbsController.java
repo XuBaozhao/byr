@@ -137,7 +137,12 @@ public class BbsController {
 
         Page<Bbs> searchResponse = bbsService.orderByLatestReplyTime(keywords,pageindex,pageSize,order);
 
-        return searchResponse.getContent();
+        if(searchResponse != null){
+            return searchResponse.getContent();
+        }else{
+            return null;
+        }
+
     }
 
 
@@ -162,6 +167,47 @@ public class BbsController {
             System.out.println();
         }
         return new ResponseEntity<>(data, HttpStatus.OK);
+    }
+    @ApiOperation(value = "按照创建发布时间排序", notes = "sortBySendtime接口")
+    @GetMapping("/sortBySendtime")
+    public List<Bbs> sortBySendtime(@RequestParam String keywords,
+                                            @RequestParam int pageindex,
+                                            @RequestParam int pageSize,
+                                            @RequestParam int orderIndex) {
+        //排序方式
+        SortOrder order = orderIndex == 1 ? SortOrder.DESC : SortOrder.ASC;
+        //页码，页面容量
+        pageindex = pageindex == 0 ? 1 : pageindex;
+        pageSize = pageSize == 0 ? 10 : pageSize;
+
+        Page<Bbs> searchResponse = bbsService.sortBySendtime(keywords,pageindex,pageSize,order);
+
+        if(searchResponse != null){
+            return searchResponse.getContent();
+        }else{
+            return null;
+        }
+    }
+
+    @ApiOperation(value = "按照创建发布时间查询范围", notes = "rangeBySendtime接口")
+    @GetMapping("/rangeBySendtime")
+    public List<Bbs> rangeBySendtime(@RequestParam String keywords,
+                                    @RequestParam int pageindex,
+                                    @RequestParam int pageSize,
+                                     @RequestParam int from,
+                                     @RequestParam int to) {
+
+        //页码，页面容量
+        pageindex = pageindex == 0 ? 1 : pageindex;
+        pageSize = pageSize == 0 ? 10 : pageSize;
+
+        Page<Bbs> searchResponse = bbsService.rangeBySendtime(keywords,pageindex,pageSize,from,to);
+
+        if(searchResponse != null){
+            return searchResponse.getContent();
+        }else{
+            return null;
+        }
     }
 
 

@@ -148,4 +148,53 @@ public class BbsServiceImpl implements IBbsService{
         return optionalBbs;
     }
 
+    @Override
+    public Page<Bbs> sortBySendtime(String keywords, int pageIndex, int pageSize, SortOrder sortOrder) {
+        //检索条件
+        BoolQueryBuilder bqb = QueryBuilders.boolQuery();
+        if (!Strings.isEmpty(keywords))
+            bqb.must(QueryBuilders.matchPhraseQuery("title", keywords))
+                    .must(QueryBuilders.matchPhraseQuery("content",keywords));
+        //排序条件
+        FieldSortBuilder fsb = SortBuilders.fieldSort("send_time").order(sortOrder);
+        //分页条件
+        Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
+        //构建查询
+        SearchQuery query = new NativeSearchQueryBuilder()
+                .withQuery(bqb)
+                .withSort(fsb)
+                .withPageable(pageable)
+                .build();
+
+        Page<Bbs> optionalBbs = null;
+        try {
+            optionalBbs = bbsRepository.search(query);
+        }catch (Exception e){
+        }
+        return optionalBbs;
+    }
+    @Override
+    public Page<Bbs> rangeBySendtime(String keywords, int pageIndex, int pageSize, int from, int to) {
+        //检索条件
+        BoolQueryBuilder bqb = QueryBuilders.boolQuery();
+        if (!Strings.isEmpty(keywords))
+            bqb.must(QueryBuilders.matchPhraseQuery("title", keywords))
+                    .must(QueryBuilders.matchPhraseQuery("content",keywords))
+                    .must(QueryBuilders.rangeQuery("send_time").from(from).to(to));
+        //分页条件
+        Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
+        //构建查询
+        SearchQuery query = new NativeSearchQueryBuilder()
+                .withQuery(bqb)
+                .withPageable(pageable)
+                .build();
+
+        Page<Bbs> optionalBbs = null;
+        try {
+            optionalBbs = bbsRepository.search(query);
+        }catch (Exception e){
+        }
+        return optionalBbs;
+    }
+
 }

@@ -23,6 +23,12 @@ public interface IBbsService {
     Iterable<Bbs> findHotTopics();
 
     Page<Bbs> orderByLatestReplyTime(String keywords, int pageIndex, int pageSize, SortOrder sortOrder);
+
+    Page<Bbs> sortBySendtime(String keywords, int pageIndex, int pageSize, SortOrder sortOrder);
+
+    Page<Bbs> rangeBySendtime(String keywords, int pageIndex, int pageSize, int from, int to);
+
+
     
 
 }
