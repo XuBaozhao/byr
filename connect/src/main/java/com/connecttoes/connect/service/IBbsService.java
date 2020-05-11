@@ -27,5 +27,9 @@ public interface IBbsService {
 
     Page<Bbs> sortBySendtime(String keywords, int pageIndex, int pageSize, SortOrder sortOrder);
 
-    Page<Bbs> rangeBySendtime(String keywords, int pageIndex, int pageSize, int from, int to);
+    Page<Bbs> rangeBySendtime(String keywords, int pageIndex, int pageSize, String from, String to);
+
+
+    
+
 }

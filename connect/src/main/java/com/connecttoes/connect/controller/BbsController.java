@@ -206,8 +206,8 @@ public class BbsController {
     public List<Bbs> rangeBySendtime(@RequestParam String keywords,
                                     @RequestParam int pageindex,
                                     @RequestParam int pageSize,
-                                     @RequestParam int from,
-                                     @RequestParam int to) {
+                                     @RequestParam String from,
+                                     @RequestParam String to) {
 
         //页码，页面容量
         pageindex = pageindex == 0 ? 1 : pageindex;
