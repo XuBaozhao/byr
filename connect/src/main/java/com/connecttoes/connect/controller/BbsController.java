@@ -167,15 +167,27 @@ public class BbsController {
 //            redisTemplate.boundValueOps(keyword).increment(1);
 //        }
 
+        if("null".equals(foretime) && !"null".equals(posttime)){
+            foretime = "2015-01-01";
+        }else if("null".equals(posttime) && !"null".equals(foretime)){
+            posttime = "2020-05-11";
+        }else if("null".equals(foretime) && ("null".equals(posttime))){
+            foretime = "2015-01-01";
+            posttime = "2020-05-11";
+        }
 
-        Pageable pageable = PageRequest.of(0,3);
+        if("null".equals(String.valueOf(pageindex))){
+            Pageable pageable = PageRequest.of(0,10);
+        }
+
+        Pageable pageable = PageRequest.of(pageindex,pageindex+10);
         Page<Bbs> data = bbsService.findByContentAndTitleAndSend_time(keyword, foretime, posttime, pageable);
 
-        for(Bbs bbs: data){
-            System.out.println();
-            System.out.println(bbs);
-            System.out.println();
-        }
+//        for(Bbs bbs: data){
+//            System.out.println();
+//            System.out.println(bbs);
+//            System.out.println();
+//        }
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
     @ApiOperation(value = "按照创建发布时间排序", notes = "sortBySendtime接口")
@@ -204,8 +216,8 @@ public class BbsController {
     public List<Bbs> rangeBySendtime(@RequestParam String keywords,
                                     @RequestParam int pageindex,
                                     @RequestParam int pageSize,
-                                     @RequestParam int from,
-                                     @RequestParam int to) {
+                                     @RequestParam String from,
+                                     @RequestParam String to) {
 
         //页码，页面容量
         pageindex = pageindex == 0 ? 1 : pageindex;

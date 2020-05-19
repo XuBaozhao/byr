@@ -174,13 +174,13 @@ public class BbsServiceImpl implements IBbsService{
         return optionalBbs;
     }
     @Override
-    public Page<Bbs> rangeBySendtime(String keywords, int pageIndex, int pageSize, int from, int to) {
+    public Page<Bbs> rangeBySendtime(String keywords, int pageIndex, int pageSize, String fromDate, String toDate) {
         //检索条件
         BoolQueryBuilder bqb = QueryBuilders.boolQuery();
         if (!Strings.isEmpty(keywords))
             bqb.must(QueryBuilders.matchPhraseQuery("title", keywords))
                     .must(QueryBuilders.matchPhraseQuery("content",keywords))
-                    .must(QueryBuilders.rangeQuery("send_time").from(from).to(to));
+                    .must(QueryBuilders.rangeQuery("send_time").from(fromDate).to(toDate));
         //分页条件
         Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
         //构建查询
