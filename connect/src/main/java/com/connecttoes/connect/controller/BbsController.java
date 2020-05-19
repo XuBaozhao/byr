@@ -61,11 +61,11 @@ public class BbsController {
 
 
         // 使用redis,存储查询关键字次数
-        if(redisTemplate.opsForValue().get(title) == null){
+       /* if(redisTemplate.opsForValue().get(title) == null){
             redisTemplate.opsForValue().set(title, 1);
         }else{
             redisTemplate.boundValueOps(title).increment(1);
-        }
+        }*/
 
        // Pageable pageable = new PageRequest(0,3);
         Pageable pageable = PageRequest.of(0,3);
@@ -83,11 +83,11 @@ public class BbsController {
     public ResponseEntity<Page<Bbs>> findByContentAndTitle(@RequestParam("cnt") String cnt){
 
         // 使用redis,存储查询关键字次数
-        if(redisTemplate.opsForValue().get(cnt) == null){
+      /*  if(redisTemplate.opsForValue().get(cnt) == null){
             redisTemplate.opsForValue().set(cnt, 1);
         }else{
             redisTemplate.boundValueOps(cnt).increment(1);
-        }
+        }*/
 
         Pageable pageable = PageRequest.of(0,3);
         Page<Bbs> data = bbsService.findByContentAndTitle(cnt, pageable);
@@ -128,7 +128,17 @@ public class BbsController {
     @GetMapping("/orderByLatestReplyTime")
     public List<Bbs> orderByLatestReplyTime(@RequestParam String keywords,
                                             @RequestParam int pageindex,
-                                            @RequestParam int pageSize, @RequestParam int orderIndex) {
+                                            @RequestParam int pageSize,
+                                            @RequestParam int orderIndex) {
+        if("null".equals(String.valueOf(pageindex))){
+            pageindex = 0;
+        }
+        if("null".equals(String.valueOf(pageSize))){
+            pageSize = 0;
+        }
+        if("null".equals(String.valueOf(orderIndex))){
+            orderIndex = 0;
+        }
         //排序方式
         SortOrder order = orderIndex == 1 ? SortOrder.DESC : SortOrder.ASC;
         //页码，页面容量
