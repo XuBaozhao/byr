@@ -116,21 +116,62 @@ public class BbsServiceImpl implements IBbsService{
 
     /**
      *结果按照最新回复时间排序
-     * @param keywords
-     * @param pageIndex
-     * @param pageSize
-     * @param sortOrder
+     * @param keywords 搜索关键词
+     * @param pageIndex 页码
+     * @param pageSize 页面容量
+     * @param sortOrder 排序方式
+     * @param foretime  查询时间段的起始时间
+     * @param posttime  查询时间段的结束时间
      * @return
      */
     @Override
-    public Page<Bbs> orderByLatestReplyTime(String keywords, int pageIndex, int pageSize, SortOrder sortOrder) {
+    public Page<Bbs> orderByLatestReplyTime(String keywords, int pageIndex, int pageSize, SortOrder sortOrder, String foretime, String posttime) {
         //检索条件
         BoolQueryBuilder bqb = QueryBuilders.boolQuery();
         if (!Strings.isEmpty(keywords))
             bqb.must(QueryBuilders.matchPhraseQuery("title", keywords))
-                    .must(QueryBuilders.matchPhraseQuery("content",keywords));
+                    .must(QueryBuilders.matchPhraseQuery("content",keywords))
+                    .must(QueryBuilders.rangeQuery("send_time").from(foretime).to(posttime));
         //排序条件
         FieldSortBuilder fsb = SortBuilders.fieldSort("latest_reply_time").order(sortOrder);
+        //分页条件
+        Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
+        //构建查询
+        SearchQuery query = new NativeSearchQueryBuilder()
+                .withQuery(bqb)
+                .withSort(fsb)
+                .withPageable(pageable)
+                .build();
+
+        Page<Bbs> optionalBbs = null;
+        try {
+            optionalBbs = bbsRepository.search(query);
+        }catch (Exception e){
+        }
+        return optionalBbs;
+    }
+
+    /**
+     * 查询某时间范围内的帖子，按回复数排序
+     *
+     * @param keywords 搜索关键词
+     * @param pageIndex 页码
+     * @param pageSize 页面容量
+     * @param sortOrder 排序方式
+     * @param foretime  查询时间段的起始时间
+     * @param posttime  查询时间段的结束时间
+     * @return
+     */
+    @Override
+    public Page<Bbs> orderByReplyCount(String keywords, int pageIndex, int pageSize, SortOrder sortOrder, String foretime, String posttime) {
+        //检索条件
+        BoolQueryBuilder bqb = QueryBuilders.boolQuery();
+        if (!Strings.isEmpty(keywords))
+            bqb.must(QueryBuilders.matchPhraseQuery("title", keywords))
+                    .must(QueryBuilders.matchPhraseQuery("content",keywords))
+                    .must(QueryBuilders.rangeQuery("send_time").from(foretime).to(posttime));
+        //排序条件
+        FieldSortBuilder fsb = SortBuilders.fieldSort("reply_count").order(sortOrder);
         //分页条件
         Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
         //构建查询

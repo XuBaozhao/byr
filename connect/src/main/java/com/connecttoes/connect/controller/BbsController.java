@@ -2,6 +2,8 @@ package com.connecttoes.connect.controller;
 
 import com.connecttoes.connect.bean.Bbs;
 import com.connecttoes.connect.service.BbsServiceImpl;
+import com.connecttoes.connect.utils.DateUtil;
+import com.connecttoes.connect.utils.PageUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.elasticsearch.search.sort.SortOrder;
@@ -17,6 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +36,9 @@ public class BbsController {
 
     @Autowired
     BbsServiceImpl bbsService;
+
+    private DateUtil dateUtil;
+    private PageUtil pageUtil;
 
     @ApiOperation(value = "查询所有数据", notes = "findAll接口")
     @GetMapping("/findAll")
@@ -103,7 +112,7 @@ public class BbsController {
     }
 
     /**
-     * 热搜功能，取回复数最多的十个帖子
+     * 热度榜，取回复数最多的十个帖子
      *
      * @return
      */
@@ -118,6 +127,8 @@ public class BbsController {
      * 将查询结果按照 最新回复时间排序
      *
      * @param keywords 搜索关键词
+     * @param foretime 发帖时间范围
+     * @param posttime 发帖时间范围
      * @param pageindex 页码
      * @param pageSize  每页多少条
      * @param orderIndex 排序方式 1---正序
@@ -127,25 +138,61 @@ public class BbsController {
     @ApiOperation(value = "按照最新回复时间排序", notes = "orderByLatestReplyTime接口")
     @GetMapping("/orderByLatestReplyTime")
     public List<Bbs> orderByLatestReplyTime(@RequestParam String keywords,
+                                            @RequestParam("foretime") String foretime,
+                                            @RequestParam("posttime") String posttime,
                                             @RequestParam int pageindex,
                                             @RequestParam int pageSize,
                                             @RequestParam int orderIndex) {
-        if("null".equals(String.valueOf(pageindex))){
-            pageindex = 0;
-        }
-        if("null".equals(String.valueOf(pageSize))){
-            pageSize = 0;
-        }
-        if("null".equals(String.valueOf(orderIndex))){
-            orderIndex = 0;
-        }
+
+        //获取时间范围
+        dateUtil.getTimeLimit(foretime, posttime);
+
+        //获取分页所需参数
+        pageUtil.getPageableParams(pageindex, pageSize, orderIndex);
+
         //排序方式
         SortOrder order = orderIndex == 1 ? SortOrder.DESC : SortOrder.ASC;
-        //页码，页面容量
-        pageindex = pageindex == 0 ? 1 : pageindex;
-        pageSize = pageSize == 0 ? 10 : pageSize;
 
-        Page<Bbs> searchResponse = bbsService.orderByLatestReplyTime(keywords,pageindex,pageSize,order);
+        Page<Bbs> searchResponse = bbsService.orderByLatestReplyTime(keywords,pageindex,pageSize,order,foretime, posttime);
+
+        if(searchResponse != null){
+            return searchResponse.getContent();
+        }else{
+            return null;
+        }
+
+    }
+
+    /**
+     * 将结果按照回复数排序
+     *
+     * @param keywords 搜索关键词
+     * @param foretime 发帖时间范围
+     * @param posttime 发帖时间范围
+     * @param pageindex 页码
+     * @param pageSize  每页多少条
+     * @param orderIndex 排序方式 1---正序
+     *              2---倒序
+     * @return
+     */
+    @ApiOperation(value = "按照回复数排序", notes = "orderByReplyCount接口")
+    @GetMapping("/orderByReplyCount")
+    public List<Bbs> orderByReplyCount(@RequestParam String keywords,
+                                            @RequestParam("foretime") String foretime,
+                                            @RequestParam("posttime") String posttime,
+                                            @RequestParam int pageindex,
+                                            @RequestParam int pageSize,
+                                            @RequestParam int orderIndex) {
+
+        //获取时间范围
+        dateUtil.getTimeLimit(foretime, posttime);
+        //获取分页所需参数
+        pageUtil.getPageableParams(pageindex, pageSize, orderIndex);
+
+        //排序方式
+        SortOrder order = orderIndex == 1 ? SortOrder.DESC : SortOrder.ASC;
+
+        Page<Bbs> searchResponse = bbsService.orderByReplyCount(keywords,pageindex,pageSize,order,foretime, posttime);
 
         if(searchResponse != null){
             return searchResponse.getContent();
@@ -158,7 +205,10 @@ public class BbsController {
 
     @ApiOperation(value = "在Title和Content中按时间查找数据", notes = "findByContentAndTitleAndAndSend_time接口")
     @GetMapping("/findByContentAndTitleAndSend_time")
-    public ResponseEntity<Page<Bbs>> findByContentAndTitleAndSend_time(@RequestParam("keyword") String keyword, @RequestParam("foretime") String foretime,  @RequestParam("posttime") String posttime){
+    public ResponseEntity<Page<Bbs>> findByContentAndTitleAndSend_time(@RequestParam("keyword") String keyword,
+                                                                       @RequestParam("foretime") String foretime,
+                                                                       @RequestParam("posttime") String posttime,
+                                                                       @RequestParam("pageIndex") int pageindex){
 
         // 使用redis,存储查询关键字次数
 //        if(redisTemplate.opsForValue().get(keyword) == null){
