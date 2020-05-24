@@ -1,11 +1,22 @@
 package com.connecttoes.connect.utils;
 
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+
+@Component
 public class DateUtil {
+    private static DateUtil dateUtil;
+
+    @PostConstruct
+    public void init(){
+        dateUtil = this;
+    }
     public void getTimeLimit(String foretime, String posttime){
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-ss");
         Calendar c = Calendar.getInstance();
