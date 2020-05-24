@@ -57,5 +57,6 @@ public interface BbsRepository extends ElasticsearchRepository<Bbs, String > {
     Page<Bbs> findByContentAndTitleAndSend_time(String keyword, String foretime, String posttime, Pageable pageable);
 
 
+    int countAllById();
 
 }

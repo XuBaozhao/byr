@@ -42,6 +42,7 @@ public class BbsServiceImpl implements IBbsService{
         return bbs;
     }
 
+
     @Override
     public Optional<Bbs> findByBbsId(String BbsId) {
         Optional<Bbs> optionalBbs;
@@ -236,6 +237,11 @@ public class BbsServiceImpl implements IBbsService{
         }catch (Exception e){
         }
         return optionalBbs;
+    }
+
+    @Override
+    public int countAllById() {
+        return bbsRepository.countAllById();
     }
 
 }

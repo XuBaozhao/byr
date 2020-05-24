@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +43,6 @@ public class BbsController {
 
     @Autowired
     private PageUtil pageUtil;
-
 
     @ApiOperation(value = "查询所有数据", notes = "findAll接口")
     @GetMapping("/findAll")
@@ -64,6 +67,42 @@ public class BbsController {
         return (Integer) redisTemplate.opsForValue().get(cnt);
     }
 
+    // 获得score
+    public Double score(String key, String value) {
+        return redisTemplate.opsForZSet().score(key, value);
+    }
+
+    @ApiOperation(value = "查询次数+1", notes = "addSearchNums接口")
+    @GetMapping("/addSearchNums")
+    public void addSearchNums(@RequestParam("id") String id){
+//        RedisAtomicLong entityIdCounter = new RedisAtomicLong(id, redisTemplate.getConnectionFactory());
+//        Long increment = entityIdCounter.getAndIncrement();
+//        System.out.println(increment);
+
+        if("null".equals(String.valueOf(score("byr", id)))) {
+            // 第一次为1
+            redisTemplate.opsForZSet().add("byr", id, 1);
+        }else {
+            double sc = score("byr", id);
+            redisTemplate.opsForZSet().incrementScore("byr", id, sc+1);
+        }
+    }
+
+    public Set<String> revRange(String key, int start, int end) {
+        return redisTemplate.opsForZSet().reverseRange(key, start, end);
+    }
+
+    @ApiOperation(value = "查询前10", notes = "getTop10Byrs接口")
+    @GetMapping("/getTop10Byrs")
+    public List<ResponseEntity<Optional<Bbs>>> getTop10Byrs(){
+        List<ResponseEntity<Optional<Bbs>>> ls = new ArrayList<ResponseEntity<Optional<Bbs>>>();
+        Set<String> reverseRange = revRange("byr", 0, 9);
+        for(String id: reverseRange) {
+            Optional<Bbs> data = bbsService.findByBbsId(id);
+            ls.add(new ResponseEntity<>(data, HttpStatus.OK));
+        }
+        return ls;
+    }
 
     @ApiOperation(value = "按照Title查询数据", notes = "findByTitle接口")
     @GetMapping("/findByTitle")
@@ -205,17 +244,25 @@ public class BbsController {
 
     @ApiOperation(value = "在Title和Content中按时间查找数据", notes = "findByContentAndTitleAndAndSend_time接口")
     @GetMapping("/findByContentAndTitleAndSend_time")
-    public ResponseEntity<Page<Bbs>> findByContentAndTitleAndSend_time(@RequestParam("keyword") String keyword,
+    public Map<Integer, ResponseEntity<Page<Bbs>>> findByContentAndTitleAndSend_time(@RequestParam("keyword") String keyword,
                                                                        @RequestParam("foretime") String foretime,
                                                                        @RequestParam("posttime") String posttime,
                                                                        @RequestParam("pageIndex") int pageindex){
 
+        Map<Integer, ResponseEntity<Page<Bbs>>> map = new HashMap<Integer, ResponseEntity<Page<Bbs>>>();
         // 使用redis,存储查询关键字次数
 //        if(redisTemplate.opsForValue().get(keyword) == null){
 //            redisTemplate.opsForValue().set(keyword, 1);
 //        }else{
 //            redisTemplate.boundValueOps(keyword).increment(1);
 //        }
+
+        Iterable<Bbs> dta = bbsService.findAll();
+        int nums = 0;
+        for(Bbs dt: dta){
+            nums += 1;
+        }
+        System.out.println(nums);
 
         if("null".equals(foretime) && !"null".equals(posttime)){
             foretime = "2015-01-01";
@@ -238,7 +285,9 @@ public class BbsController {
 //            System.out.println(bbs);
 //            System.out.println();
 //        }
-        return new ResponseEntity<>(data, HttpStatus.OK);
+        map.put(nums, new ResponseEntity<>(data, HttpStatus.OK));
+        return map;
+        //return new ResponseEntity<>(data, HttpStatus.OK);
     }
     @ApiOperation(value = "按照创建发布时间排序", notes = "sortBySendtime接口")
     @GetMapping("/sortBySendtime")

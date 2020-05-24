@@ -30,7 +30,7 @@ public interface IBbsService {
 
     Page<Bbs> rangeBySendtime(String keywords, int pageIndex, int pageSize, String from, String to);
 
-
+    int countAllById();
     
 
 }
