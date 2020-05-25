@@ -189,14 +189,22 @@ public class BbsServiceImpl implements IBbsService{
         }
         return optionalBbs;
     }
-
+    /*
+     * @Author Karen
+     * @Description //TODO 10:34 * @Date 10:34 2020/5/21
+     * @Param [keywords, pageIndex, pageSize, sortOrder, fromDate, toDate]
+     * @return org.springframework.data.domain.Page<com.connecttoes.connect.bean.Bbs>
+     **/
     @Override
-    public Page<Bbs> sortBySendtime(String keywords, int pageIndex, int pageSize, SortOrder sortOrder) {
+    public Page<Bbs> sortBySendtime(String keywords, int pageIndex, int pageSize, SortOrder sortOrder, String fromDate, String toDate) {
         //检索条件
         BoolQueryBuilder bqb = QueryBuilders.boolQuery();
         if (!Strings.isEmpty(keywords))
             bqb.must(QueryBuilders.matchPhraseQuery("title", keywords))
                     .must(QueryBuilders.matchPhraseQuery("content",keywords));
+        //判断是否加了时间段，这里默认如果没有时间段，前端应toDate和fromDate都为空。
+        if (!Strings.isEmpty(fromDate)&&!Strings.isEmpty(toDate))
+            bqb.must(QueryBuilders.rangeQuery("send_time").from(fromDate).to(toDate));
         //排序条件
         FieldSortBuilder fsb = SortBuilders.fieldSort("send_time").order(sortOrder);
         //分页条件
@@ -215,33 +223,4 @@ public class BbsServiceImpl implements IBbsService{
         }
         return optionalBbs;
     }
-    @Override
-    public Page<Bbs> rangeBySendtime(String keywords, int pageIndex, int pageSize, String fromDate, String toDate) {
-        //检索条件
-        BoolQueryBuilder bqb = QueryBuilders.boolQuery();
-        if (!Strings.isEmpty(keywords))
-            bqb.must(QueryBuilders.matchPhraseQuery("title", keywords))
-                    .must(QueryBuilders.matchPhraseQuery("content",keywords))
-                    .must(QueryBuilders.rangeQuery("send_time").from(fromDate).to(toDate));
-        //分页条件
-        Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
-        //构建查询
-        SearchQuery query = new NativeSearchQueryBuilder()
-                .withQuery(bqb)
-                .withPageable(pageable)
-                .build();
-
-        Page<Bbs> optionalBbs = null;
-        try {
-            optionalBbs = bbsRepository.search(query);
-        }catch (Exception e){
-        }
-        return optionalBbs;
-    }
-
-    @Override
-    public int countAllById() {
-        return bbsRepository.countAllById();
-    }
-
 }
