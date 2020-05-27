@@ -2,6 +2,7 @@ package com.connecttoes.connect.service;
 
 import com.connecttoes.connect.bean.Bbs;
 import com.connecttoes.connect.dao.BbsRepository;
+import com.connecttoes.connect.utils.SuggestUtil;
 import org.elasticsearch.common.Strings;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,8 @@ public class BbsServiceImpl implements IBbsService{
     @Autowired
     private BbsRepository bbsRepository;
 
+    @Autowired
+    private ElasticsearchTemplate elasticsearchTemplate;
 
 
 
@@ -198,6 +202,9 @@ public class BbsServiceImpl implements IBbsService{
     @Override
     public Page<Bbs> sortBySendtime(String keywords, int pageIndex, int pageSize, SortOrder sortOrder, String fromDate, String toDate) {
         //检索条件
+
+        SuggestUtil.listSuggestCompletion("suggest","电脑",2,"byr","_doc",elasticsearchTemplate);
+
         BoolQueryBuilder bqb = QueryBuilders.boolQuery();
         if (!Strings.isEmpty(keywords))
             bqb.must(QueryBuilders.matchPhraseQuery("title", keywords))

@@ -22,6 +22,7 @@ public class Bbs implements Comparable<Bbs>{
     private String latest_reply_time;
     private String content;
     private String partion;
+    private String suggest;
 
     @Override
     public int compareTo(Bbs o) {

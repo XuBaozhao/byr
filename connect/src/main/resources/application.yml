@@ -6,19 +6,18 @@ eureka:
 server:
  port: 8766
 
-spring:
- application:
-  name: connect_to_es
-
- data:
-   elasticsearch:
-     client:
-       reactive:
-         endpoints: http://localhost:9200
-     repositories:
-       enabled: true
 #  thymeleaf:
 #    prefix: classpath:/templates/
 #    suffix: .html
 #    mode: HTML5
 #    encoding: UTF-8
+spring:
+ data:
+  elasticsearch:
+   cluster-name: my-application
+   cluster-nodes: 192.168.1.6:9300
+   client:
+    reactive:
+     endpoints: http://192.168.1.6:9200
+   repositories:
+    enabled: true
