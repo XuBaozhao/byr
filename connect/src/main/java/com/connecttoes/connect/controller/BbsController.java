@@ -264,20 +264,29 @@ public class BbsController {
         }
         System.out.println(nums);
 
-        if(null == foretime && null == posttime){
+        if(null == foretime && null != posttime){
             foretime = "2015-01-01";
         }else if(null == posttime && null != foretime){
             posttime = "2020-05-11";
-        }else if(null !=foretime && null == posttime){
+        }else if(null == foretime && null == posttime){
             foretime = "2015-01-01";
             posttime = "2020-05-11";
+        }
+
+        if(foretime.length() == 0 && posttime.length() == 0){
+            foretime = "2015-01-01";
+            posttime = "2020-05-11";
+        }else if(foretime.length() != 0 && posttime.length() == 0){
+            posttime = "2020-05-11";
+        }else if(foretime.length() == 0 && posttime.length() != 0){
+            foretime = "2015-01-01";
         }
 
         if(null == String.valueOf(pageindex)){
             Pageable pageable = PageRequest.of(0,10);
         }
 
-        Pageable pageable = PageRequest.of(pageindex,pageindex+10);
+        Pageable pageable = PageRequest.of((pageindex-1)*10,(pageindex-1)*10+10);
         Page<Bbs> data = bbsService.findByContentAndTitleAndSend_time(keyword, foretime, posttime, pageable);
 
 //        for(Bbs bbs: data){
