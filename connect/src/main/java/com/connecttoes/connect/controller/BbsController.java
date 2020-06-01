@@ -264,16 +264,16 @@ public class BbsController {
         }
         System.out.println(nums);
 
-        if("null".equals(foretime) && !"null".equals(posttime)){
+        if(null == foretime && null == posttime){
             foretime = "2015-01-01";
-        }else if("null".equals(posttime) && !"null".equals(foretime)){
+        }else if(null == posttime && null != foretime){
             posttime = "2020-05-11";
-        }else if("null".equals(foretime) && ("null".equals(posttime))){
+        }else if(null !=foretime && null == posttime){
             foretime = "2015-01-01";
             posttime = "2020-05-11";
         }
 
-        if("null".equals(String.valueOf(pageindex))){
+        if(null == String.valueOf(pageindex)){
             Pageable pageable = PageRequest.of(0,10);
         }
 
