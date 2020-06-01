@@ -286,7 +286,7 @@ public class BbsController {
             Pageable pageable = PageRequest.of(0,10);
         }
 
-        Pageable pageable = PageRequest.of(pageindex,10);
+        Pageable pageable = PageRequest.of(pageindex-1,10);
         Page<Bbs> data = bbsService.findByContentAndTitleAndSend_time(keyword, foretime, posttime, pageable);
 
 //        for(Bbs bbs: data){
