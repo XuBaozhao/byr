@@ -46,7 +46,7 @@ public interface BbsRepository extends ElasticsearchRepository<Bbs, String > {
             "  ],\n" +
             "  \"filter\":{\n" +
             "    \"range\":{\n" +
-            "      \"sender_time\":{\n" +
+            "      \"send_time\":{\n" +
             "        \"lte\" : \"?2\",\n" +
             "        \"gte\" : \"?1\",\n" +
             "        \"format\":\"yyyy-MM-dd||yyyy-MM-dd\"\n" +

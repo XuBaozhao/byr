@@ -26,11 +26,6 @@ public interface IBbsService {
 
     Page<Bbs> orderByReplyCount(String keywords, int pageIndex, int pageSize, SortOrder sortOrder, String foretime, String posttime);
 
-    Page<Bbs> sortBySendtime(String keywords, int pageIndex, int pageSize, SortOrder sortOrder);
-
-    Page<Bbs> rangeBySendtime(String keywords, int pageIndex, int pageSize, String from, String to);
-
-    int countAllById();
-    
+    Page<Bbs> sortBySendtime(String keywords, int pageIndex, int pageSize, SortOrder sortOrder, String from, String to);
 
 }

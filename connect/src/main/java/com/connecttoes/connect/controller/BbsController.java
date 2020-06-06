@@ -278,20 +278,29 @@ public class BbsController {
         }
         System.out.println(nums);
 
-        if("null".equals(foretime) && !"null".equals(posttime)){
+        if(null == foretime && null != posttime){
             foretime = "2015-01-01";
-        }else if("null".equals(posttime) && !"null".equals(foretime)){
+        }else if(null == posttime && null != foretime){
             posttime = "2020-05-11";
-        }else if("null".equals(foretime) && ("null".equals(posttime))){
+        }else if(null == foretime && null == posttime){
             foretime = "2015-01-01";
             posttime = "2020-05-11";
         }
 
-        if("null".equals(String.valueOf(pageindex))){
+        if(foretime.length() == 0 && posttime.length() == 0){
+            foretime = "2015-01-01";
+            posttime = "2020-05-11";
+        }else if(foretime.length() != 0 && posttime.length() == 0){
+            posttime = "2020-05-11";
+        }else if(foretime.length() == 0 && posttime.length() != 0){
+            foretime = "2015-01-01";
+        }
+
+        if(null == String.valueOf(pageindex)){
             Pageable pageable = PageRequest.of(0,10);
         }
 
-        Pageable pageable = PageRequest.of(pageindex,pageindex+10);
+        Pageable pageable = PageRequest.of(pageindex-1,10);
         Page<Bbs> data = bbsService.findByContentAndTitleAndSend_time(keyword, foretime, posttime, pageable);
 
 //        for(Bbs bbs: data){
@@ -303,47 +312,33 @@ public class BbsController {
         return map;
         //return new ResponseEntity<>(data, HttpStatus.OK);
     }
+    /*
+     * @Author Karen
+     * @Description //TODO 10:27 * @Date 10:27 2020/5/21
+     * @Param [keywords, pageindex, pageSize, orderIndex]
+     * @return java.util.List<com.connecttoes.connect.bean.Bbs>
+     **/
     @ApiOperation(value = "按照创建发布时间排序", notes = "sortBySendtime接口")
     @GetMapping("/sortBySendtime")
-    public List<Bbs> sortBySendtime(@RequestParam String keywords,
+    public ResponseEntity<Page<Bbs>> sortBySendtime(@RequestParam String keywords,
                                             @RequestParam int pageindex,
                                             @RequestParam int pageSize,
-                                            @RequestParam int orderIndex) {
+                                            @RequestParam int orderIndex,
+                                            @RequestParam(required = false) String fromDate,
+                                            @RequestParam(required = false) String toDate) {
         //排序方式
         SortOrder order = orderIndex == 1 ? SortOrder.DESC : SortOrder.ASC;
         //页码，页面容量
         pageindex = pageindex == 0 ? 1 : pageindex;
         pageSize = pageSize == 0 ? 10 : pageSize;
 
-        Page<Bbs> searchResponse = bbsService.sortBySendtime(keywords,pageindex,pageSize,order);
+        Page<Bbs> searchResponse = bbsService.sortBySendtime(keywords,pageindex,pageSize,order,fromDate,toDate);
 
         if(searchResponse != null){
-            return searchResponse.getContent();
+            return new ResponseEntity<>(searchResponse, HttpStatus.OK);
         }else{
             return null;
         }
     }
-
-    @ApiOperation(value = "按照创建发布时间查询范围", notes = "rangeBySendtime接口")
-    @GetMapping("/rangeBySendtime")
-    public List<Bbs> rangeBySendtime(@RequestParam String keywords,
-                                    @RequestParam int pageindex,
-                                    @RequestParam int pageSize,
-                                     @RequestParam String from,
-                                     @RequestParam String to) {
-
-        //页码，页面容量
-        pageindex = pageindex == 0 ? 1 : pageindex;
-        pageSize = pageSize == 0 ? 10 : pageSize;
-
-        Page<Bbs> searchResponse = bbsService.rangeBySendtime(keywords,pageindex,pageSize,from,to);
-
-        if(searchResponse != null){
-            return searchResponse.getContent();
-        }else{
-            return null;
-        }
-    }
-
 
 }
