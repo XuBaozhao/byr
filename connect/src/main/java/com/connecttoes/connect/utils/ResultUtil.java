@@ -77,14 +77,11 @@ public class ResultUtil implements Serializable {
      * @param data
      * @return
      */
-    public ResultUtil pageSuccess(Page data){
+    public ResultUtil pageSuccess(List data, int totalElements, int totalPages){
         Map<String, Object> result = new HashMap<>(5);
-        /*
-        此处添加result的信息
-         */
-        result.put("totleElements",data.getTotalElements());
-        result.put("totlePages", data.getTotalPages());
-        result.put("data", data.getContent());
+        result.put("tota;Elements",totalElements);
+        result.put("totalPages", totalPages);
+        result.put("data", data);
         this.code = SUCCESS;
         this.message = "操作成功";
         this.data = result;

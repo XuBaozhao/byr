@@ -103,10 +103,10 @@ public class BbsServiceImpl implements IBbsService{
      * @return
      */
     @Override
-    public Iterable<Bbs> findHotTopics() {
+    public Page<Bbs> findHotTopics() {
         Sort sort = Sort.by(Sort.Direction.DESC, "reply_count");//按照回复数降序
         Pageable pageable = PageRequest.of(0,10,sort);
-        Iterable<Bbs> bbs = null;
+        Page<Bbs> bbs = null;
         try {
             bbs = bbsRepository.findAll(pageable);
         }catch (Exception e){

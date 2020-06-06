@@ -20,7 +20,7 @@ public interface IBbsService {
 
     Page<Bbs> findByContentAndTitleAndSend_time(String keyword, String foretime, String posttime, Pageable pageable);
 
-    Iterable<Bbs> findHotTopics();
+    Page<Bbs> findHotTopics();
 
     Page<Bbs> orderByLatestReplyTime(String keywords, int pageIndex, int pageSize, SortOrder sortOrder, String foretime, String posttime);
 

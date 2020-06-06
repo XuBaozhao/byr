@@ -1,7 +1,9 @@
 package com.connecttoes.connect.controller;
 
 import com.connecttoes.connect.bean.Bbs;
+import com.connecttoes.connect.bean.BbsDTO;
 import com.connecttoes.connect.service.BbsServiceImpl;
+import com.connecttoes.connect.utils.BbsUtil;
 import com.connecttoes.connect.utils.DateUtil;
 import com.connecttoes.connect.utils.PageUtil;
 import com.connecttoes.connect.utils.ResultUtil;
@@ -43,6 +45,9 @@ public class BbsController {
 
     @Autowired
     private PageUtil pageUtil;
+
+    @Autowired
+    private BbsUtil bbsUtil;
 
     @ApiOperation(value = "查询所有数据", notes = "findAll接口")
     @GetMapping("/findAll")
@@ -158,9 +163,10 @@ public class BbsController {
      */
     @ApiOperation(value = "热搜接口", notes = "getHotTopics接口")
     @GetMapping("/getHotTopics")
-    public ResponseEntity<Page<Bbs>> getHotTopics(){
-        Iterable<Bbs> data = bbsService.findHotTopics();
-        return new ResponseEntity(data, HttpStatus.OK);
+    public Object getHotTopics(){
+        Page<Bbs> data = bbsService.findHotTopics();
+        List<BbsDTO> result = bbsUtil.pageToList(data);
+        return new ResultUtil().success(result);
     }
 
     /**
@@ -195,8 +201,12 @@ public class BbsController {
 
         Page<Bbs> searchResponse = bbsService.orderByLatestReplyTime(keywords,pageIndex,pageSize,order,foretime, posttime);
 
+        List<BbsDTO> data = bbsUtil.pageToList(searchResponse);
+        int totalElements = searchResponse.getNumberOfElements();
+        int totalPages = searchResponse.getTotalPages();
+
         if(searchResponse != null){
-            return new ResultUtil().pageSuccess(searchResponse);
+            return new ResultUtil().pageSuccess(data, totalElements, totalPages);
         }else{
             return new ResultUtil().failed();
         }
@@ -217,11 +227,11 @@ public class BbsController {
     @ApiOperation(value = "按照回复数排序", notes = "orderByReplyCount接口")
     @GetMapping("/orderByReplyCount")
     public Object orderByReplyCount(@RequestParam String keywords,
-                                            @RequestParam("foretime") String foretime,
-                                            @RequestParam("posttime") String posttime,
-                                            @RequestParam int pageindex,
-                                            @RequestParam int pageSize,
-                                            @RequestParam int orderIndex) {
+                                    @RequestParam("foretime") String foretime,
+                                    @RequestParam("posttime") String posttime,
+                                    @RequestParam int pageindex,
+                                    @RequestParam int pageSize,
+                                    @RequestParam int orderIndex) {
 
         //获取时间范围
         dateUtil.getTimeLimit(foretime, posttime);
@@ -233,8 +243,12 @@ public class BbsController {
 
         Page<Bbs> searchResponse = bbsService.orderByReplyCount(keywords,pageindex,pageSize,order,foretime, posttime);
 
+        List<BbsDTO> data = bbsUtil.pageToList(searchResponse);
+        int totalElements = searchResponse.getNumberOfElements();
+        int totalPages = searchResponse.getTotalPages();
+
         if(searchResponse != null){
-            return new ResultUtil().pageSuccess(searchResponse);
+            return new ResultUtil().pageSuccess(data, totalElements, totalPages);
         }else{
             return new ResultUtil().failed();
         }

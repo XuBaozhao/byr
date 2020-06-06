@@ -21,10 +21,10 @@ public class DateUtil {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-ss");
         Calendar c = Calendar.getInstance();
 
-        if("null".equals(posttime) && !"null".equals(foretime)){ //获取当前日期
+        if(0 == posttime.length() && 0 != foretime.length()){ //获取当前日期
             Date today = new Date();
             posttime = dateFormat.format(today);
-        }else if("null".equals(foretime) && !"null".equals(posttime)){ //获取给定终止日期前三个月的日期
+        }else if(0 == foretime.length() && 0 != posttime.length()){ //获取给定终止日期前三个月的日期
             try {
                 Date currentDate = dateFormat.parse(foretime);
                 c.setTime(currentDate);
@@ -33,7 +33,7 @@ public class DateUtil {
             }catch (ParseException e){
             }
 
-        }else if("null".equals(foretime) && ("null".equals(posttime))){ //获取当前日期和三个月前的日期
+        }else if(0 == foretime.length() && 0 == posttime.length()){ //获取当前日期和三个月前的日期
             Date today = new Date();
             posttime = dateFormat.format(today);
             c.setTime(today);
