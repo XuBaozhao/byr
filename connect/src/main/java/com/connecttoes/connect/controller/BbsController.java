@@ -202,6 +202,7 @@ public class BbsController {
         Page<Bbs> searchResponse = bbsService.orderByLatestReplyTime(keywords,pageIndex,pageSize,order,foretime, posttime);
 
         List<BbsDTO> data = bbsUtil.pageToList(searchResponse);
+
         int totalElements = searchResponse.getNumberOfElements();
         int totalPages = searchResponse.getTotalPages();
 

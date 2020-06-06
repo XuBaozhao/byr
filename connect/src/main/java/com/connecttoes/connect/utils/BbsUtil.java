@@ -33,9 +33,8 @@ public class BbsUtil {
         List<Bbs> elements = pageData.getContent();
         int size = pageData.getSize();
         List<BbsDTO> results = new ArrayList<BbsDTO>(size);
-        for(int i = 0; i < size; i++){
+        for(Bbs element : elements){
             BbsDTO bbsDTO = new BbsDTO();
-            Bbs element = elements.get(i);
             bbsDTO.setId(element.getId());
             bbsDTO.setTitle(element.getTitle());
             bbsDTO.setPartion(element.getPartion());
@@ -47,7 +46,7 @@ public class BbsUtil {
             bbsDTO.setContent(element.getContent());
             String comments = element.getComments();
             bbsDTO.setComments(Arrays.asList(comments.split("发信人")));
-            results.add(i, bbsDTO);
+            results.add(bbsDTO);
         }
         return results;
     }
