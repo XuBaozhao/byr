@@ -25,9 +25,6 @@ public class BbsServiceImpl implements IBbsService{
     @Autowired
     private BbsRepository bbsRepository;
 
-
-
-
     @Override
     public Iterable<Bbs> findAll() {
         Iterable<Bbs> bbs = null;
@@ -126,27 +123,13 @@ public class BbsServiceImpl implements IBbsService{
      * @return
      */
     @Override
-    public Page<Bbs> orderByLatestReplyTime(String keywords, int pageIndex, int pageSize, SortOrder sortOrder, String foretime, String posttime) {
-        //检索条件
-        BoolQueryBuilder bqb = QueryBuilders.boolQuery();
-        if (!Strings.isEmpty(keywords))
-            bqb.must(QueryBuilders.matchPhraseQuery("title", keywords))
-                    .must(QueryBuilders.matchPhraseQuery("content",keywords))
-                    .must(QueryBuilders.rangeQuery("send_time").from(foretime).to(posttime));
-        //排序条件
-        FieldSortBuilder fsb = SortBuilders.fieldSort("latest_reply_time").order(sortOrder);
-        //分页条件
-        Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
-        //构建查询
-        SearchQuery query = new NativeSearchQueryBuilder()
-                .withQuery(bqb)
-                .withSort(fsb)
-                .withPageable(pageable)
-                .build();
+    public Page<Bbs> orderByLatestReplyTime(String keywords, int pageIndex, int pageSize, Sort.Direction sortOrder, String foretime, String posttime) {
+        Sort sort = Sort.by(sortOrder, "latest_reply_time");//按照回复数降序
 
+        Pageable pageable = PageRequest.of(pageIndex-1,pageSize, sort);
         Page<Bbs> optionalBbs = null;
         try {
-            optionalBbs = bbsRepository.search(query);
+            optionalBbs = bbsRepository.findByContentAndTitleAndSend_time(keywords, foretime, posttime, pageable);
         }catch (Exception e){
         }
         return optionalBbs;
@@ -164,32 +147,19 @@ public class BbsServiceImpl implements IBbsService{
      * @return
      */
     @Override
-    public Page<Bbs> orderByReplyCount(String keywords, int pageIndex, int pageSize, SortOrder sortOrder, String foretime, String posttime) {
-        //检索条件
-        BoolQueryBuilder bqb = QueryBuilders.boolQuery();
-        if (!Strings.isEmpty(keywords))
-            bqb.must(QueryBuilders.matchPhraseQuery("title", keywords))
-                    .must(QueryBuilders.matchPhraseQuery("content",keywords))
-                    .must(QueryBuilders.rangeQuery("send_time").from(foretime).to(posttime));
-        //排序条件
-        FieldSortBuilder fsb = SortBuilders.fieldSort("reply_count").order(sortOrder);
-        //分页条件
-        Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
-        //构建查询
-        SearchQuery query = new NativeSearchQueryBuilder()
-                .withQuery(bqb)
-                .withSort(fsb)
-                .withPageable(pageable)
-                .build();
+    public Page<Bbs> orderByReplyCount(String keywords, int pageIndex, int pageSize, Sort.Direction sortOrder, String foretime, String posttime) {
+        Sort sort = Sort.by(sortOrder, "reply_count");//按照回复数降序
 
+        Pageable pageable = PageRequest.of(pageIndex-1,pageSize, sort);
         Page<Bbs> optionalBbs = null;
         try {
-            optionalBbs = bbsRepository.search(query);
+            optionalBbs = bbsRepository.findByContentAndTitleAndSend_time(keywords, foretime, posttime, pageable);
         }catch (Exception e){
         }
         return optionalBbs;
     }
-    /*
+
+    /**
      * @Author Karen
      * @Description //TODO 10:34 * @Date 10:34 2020/5/21
      * @Param [keywords, pageIndex, pageSize, sortOrder, fromDate, toDate]

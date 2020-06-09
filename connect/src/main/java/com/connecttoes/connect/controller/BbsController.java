@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.http.HttpStatus;
@@ -197,7 +198,7 @@ public class BbsController {
         pageUtil.getPageableParams(pageIndex, pageSize, orderIndex);
 
         //排序方式
-        SortOrder order = orderIndex == 1 ? SortOrder.DESC : SortOrder.ASC;
+        Sort.Direction order = orderIndex == 1 ? Sort.Direction.DESC : Sort.Direction.ASC;
 
         Page<Bbs> searchResponse = bbsService.orderByLatestReplyTime(keywords,pageIndex,pageSize,order,foretime, posttime);
 
@@ -240,7 +241,7 @@ public class BbsController {
         pageUtil.getPageableParams(pageindex, pageSize, orderIndex);
 
         //排序方式
-        SortOrder order = orderIndex == 1 ? SortOrder.DESC : SortOrder.ASC;
+        Sort.Direction order = orderIndex == 1 ? Sort.Direction.DESC : Sort.Direction.ASC;
 
         Page<Bbs> searchResponse = bbsService.orderByReplyCount(keywords,pageindex,pageSize,order,foretime, posttime);
 

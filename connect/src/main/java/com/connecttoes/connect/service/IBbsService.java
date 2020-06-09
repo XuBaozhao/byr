@@ -4,6 +4,7 @@ import com.connecttoes.connect.bean.Bbs;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.Optional;
 
@@ -22,9 +23,9 @@ public interface IBbsService {
 
     Page<Bbs> findHotTopics();
 
-    Page<Bbs> orderByLatestReplyTime(String keywords, int pageIndex, int pageSize, SortOrder sortOrder, String foretime, String posttime);
+    Page<Bbs> orderByLatestReplyTime(String keywords, int pageIndex, int pageSize, Sort.Direction sortOrder, String foretime, String posttime);
 
-    Page<Bbs> orderByReplyCount(String keywords, int pageIndex, int pageSize, SortOrder sortOrder, String foretime, String posttime);
+    Page<Bbs> orderByReplyCount(String keywords, int pageIndex, int pageSize, Sort.Direction sortOrder, String foretime, String posttime);
 
     Page<Bbs> sortBySendtime(String keywords, int pageIndex, int pageSize, SortOrder sortOrder, String from, String to);
 
