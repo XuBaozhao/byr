@@ -3,10 +3,7 @@ package com.connecttoes.connect.controller;
 import com.connecttoes.connect.bean.Bbs;
 import com.connecttoes.connect.bean.BbsDTO;
 import com.connecttoes.connect.service.BbsServiceImpl;
-import com.connecttoes.connect.utils.BbsUtil;
-import com.connecttoes.connect.utils.DateUtil;
-import com.connecttoes.connect.utils.PageUtil;
-import com.connecttoes.connect.utils.ResultUtil;
+import com.connecttoes.connect.utils.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.elasticsearch.search.sort.SortOrder;
@@ -15,7 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.Optional;
@@ -60,10 +54,9 @@ public class BbsController {
 
     @ApiOperation(value = "按照Id查询数据", notes = "findById接口")
     @GetMapping("/findById")
-    public ResponseEntity<Optional<Bbs>> findById(@RequestParam("id") String id){
+    public ResponseEntity<BbsDTO> findById(@RequestParam("id") String id){
         Optional<Bbs> data = bbsService.findByBbsId(id);
-        System.out.println(data);
-        return new ResponseEntity<>(data, HttpStatus.OK);
+        return new ResponseEntity<>(bbsUtil.pageToList(data), HttpStatus.OK);
     }
 
     @ApiOperation(value = "获取查询次数", notes = "GetSearchNums接口")

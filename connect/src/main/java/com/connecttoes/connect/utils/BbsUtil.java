@@ -9,6 +9,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,6 +50,22 @@ public class BbsUtil {
             results.add(bbsDTO);
         }
         return results;
+    }
+    public BbsDTO pageToList(Optional<Bbs> pageData){
+        Bbs element = pageData.get();
+        BbsDTO bbsDTO = new BbsDTO();
+        bbsDTO.setId(element.getId());
+        bbsDTO.setTitle(element.getTitle());
+        bbsDTO.setPartion(element.getPartion());
+        bbsDTO.setSender(element.getSender());
+        bbsDTO.setSend_time(element.getSend_time());
+        bbsDTO.setReply_count(element.getReply_count());
+        bbsDTO.setLatest_reply_time(element.getLatest_reply_time());
+        bbsDTO.setUrl(element.getUrl());
+        bbsDTO.setContent(element.getContent());
+        String comments = element.getComments();
+        bbsDTO.setComments(Arrays.asList(comments.split("发信人")));
+        return bbsDTO;
     }
 
     public String getContent(String content){
