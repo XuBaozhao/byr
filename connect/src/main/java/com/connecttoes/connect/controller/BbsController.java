@@ -104,11 +104,11 @@ public class BbsController {
 
 
         // 使用redis,存储查询关键字次数
-       /* if(redisTemplate.opsForValue().get(title) == null){
+       if(redisTemplate.opsForValue().get(title) == null){
             redisTemplate.opsForValue().set(title, 1);
         }else{
             redisTemplate.boundValueOps(title).increment(1);
-        }*/
+        }
 
        // Pageable pageable = new PageRequest(0,3);
         Pageable pageable = PageRequest.of(0,3);
@@ -126,11 +126,11 @@ public class BbsController {
     public ResponseEntity<Page<Bbs>> findByContentAndTitle(@RequestParam("cnt") String cnt){
 
         // 使用redis,存储查询关键字次数
-      /*  if(redisTemplate.opsForValue().get(cnt) == null){
+        if(redisTemplate.opsForValue().get(cnt) == null){
             redisTemplate.opsForValue().set(cnt, 1);
         }else{
             redisTemplate.boundValueOps(cnt).increment(1);
-        }*/
+        }
 
         Pageable pageable = PageRequest.of(0,3);
         Page<Bbs> data = bbsService.findByContentAndTitle(cnt, pageable);
@@ -222,6 +222,12 @@ public class BbsController {
                                     @RequestParam int pageindex,
                                     @RequestParam int pageSize,
                                     @RequestParam int orderIndex) {
+        
+        if(redisTemplate.opsForValue().get(keywords) == null){
+            redisTemplate.opsForValue().set(keywords, 1);
+        }else{
+            redisTemplate.boundValueOps(keywords).increment(1);
+        }
 
         //获取时间范围
         dateUtil.getTimeLimit(foretime, posttime);
@@ -255,11 +261,11 @@ public class BbsController {
 
         Map<Integer, ResponseEntity<Page<Bbs>>> map = new HashMap<Integer, ResponseEntity<Page<Bbs>>>();
         // 使用redis,存储查询关键字次数
-//        if(redisTemplate.opsForValue().get(keyword) == null){
-//            redisTemplate.opsForValue().set(keyword, 1);
-//        }else{
-//            redisTemplate.boundValueOps(keyword).increment(1);
-//        }
+        if(redisTemplate.opsForValue().get(keyword) == null){
+            redisTemplate.opsForValue().set(keyword, 1);
+        }else{
+            redisTemplate.boundValueOps(keyword).increment(1);
+        }
 
         Iterable<Bbs> dta = bbsService.findAll();
         int nums = 0;
@@ -311,6 +317,12 @@ public class BbsController {
                                             @RequestParam int orderIndex,
                                             @RequestParam(required = false) String foretime,
                                             @RequestParam(required = false) String posttime) {
+
+        if(redisTemplate.opsForValue().get(keywords) == null){
+            redisTemplate.opsForValue().set(keywords, 1);
+        }else{
+            redisTemplate.boundValueOps(keywords).increment(1);
+        }
 
         if(null == foretime && null != posttime){
             foretime = "2015-01-01";
