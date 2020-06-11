@@ -29,6 +29,11 @@ public class BbsUtil {
         bbsUtil = this;
     }
 
+    /**
+     * 只清洗content
+     * @param pageData
+     * @return
+     */
     public List<BbsDTO> pageToList(Page<Bbs> pageData){
         List<Bbs> elements = pageData.getContent();
         int size = pageData.getSize();
