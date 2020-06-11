@@ -30,9 +30,6 @@ public class BbsServiceImpl implements IBbsService{
         Iterable<Bbs> bbs = null;
         try {
             bbs = bbsRepository.findAll();
-            System.out.println();
-            System.out.println(bbs);
-            System.out.println();
         }catch (Exception e){
             System.out.println("failed");
         }
@@ -57,6 +54,7 @@ public class BbsServiceImpl implements IBbsService{
         try {
             optionalBbs = bbsRepository.findBbsByTitle(title, pageable);
         }catch (Exception e){
+            System.out.println("failed");
         }
         return optionalBbs;
     }
@@ -67,6 +65,7 @@ public class BbsServiceImpl implements IBbsService{
         try {
             optionalBbs = bbsRepository.findByContentAndTitle(cnt, pageable);
         }catch (Exception e){
+            System.out.println("failed");
         }
         return optionalBbs;
     }
@@ -77,6 +76,7 @@ public class BbsServiceImpl implements IBbsService{
         try {
             optionalBbs = bbsRepository.findByContentAndTitleAndSend_time(keyword, foretime, posttime, pageable);
         }catch (Exception e){
+            System.out.println("failed");
         }
         return optionalBbs;
     }
@@ -147,8 +147,8 @@ public class BbsServiceImpl implements IBbsService{
      * @return
      */
     @Override
-    public Page<Bbs> orderByReplyCount(String keywords, int pageIndex, int pageSize, Sort.Direction sortOrder, String foretime, String posttime) {
-        Sort sort = Sort.by(sortOrder, "reply_count");//按照回复数降序
+    public Page<Bbs> orderByField(String keywords, int pageIndex, int pageSize, Sort.Direction sortOrder, String foretime, String posttime,String field) {
+        Sort sort = Sort.by(sortOrder, field);//按照回复数降序
 
         Pageable pageable = PageRequest.of(pageIndex-1,pageSize, sort);
         Page<Bbs> optionalBbs = null;
@@ -158,6 +158,7 @@ public class BbsServiceImpl implements IBbsService{
         }
         return optionalBbs;
     }
+
 
     /**
      * @Author Karen

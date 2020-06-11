@@ -47,9 +47,7 @@ public class BbsController {
     @ApiOperation(value = "查询所有数据", notes = "findAll接口")
     @GetMapping("/findAll")
     public ResponseEntity<Iterable<Bbs>> findAllBbs(){
-        System.out.println("查找数据");
         Iterable<Bbs> data = bbsService.findAll();
-        System.out.println("查询数据:" + data);
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 
@@ -74,9 +72,6 @@ public class BbsController {
     @ApiOperation(value = "查询次数+1", notes = "addSearchNums接口")
     @GetMapping("/addSearchNums")
     public void addSearchNums(@RequestParam("id") String id){
-//        RedisAtomicLong entityIdCounter = new RedisAtomicLong(id, redisTemplate.getConnectionFactory());
-//        Long increment = entityIdCounter.getAndIncrement();
-//        System.out.println(increment);
 
         if("null".equals(String.valueOf(score("byr", id)))) {
             // 第一次为1
@@ -236,7 +231,7 @@ public class BbsController {
         //排序方式
         Sort.Direction order = orderIndex == 1 ? Sort.Direction.DESC : Sort.Direction.ASC;
 
-        Page<Bbs> searchResponse = bbsService.orderByReplyCount(keywords,pageindex,pageSize,order,foretime, posttime);
+        Page<Bbs> searchResponse = bbsService.orderByField(keywords,pageindex,pageSize,order,foretime, posttime,"reply_count");
 
         List<BbsDTO> data = bbsUtil.pageToList(searchResponse);
         long totalElements = searchResponse.getTotalElements();
@@ -298,11 +293,6 @@ public class BbsController {
         Pageable pageable = PageRequest.of(pageindex-1,10);
         Page<Bbs> data = bbsService.findByContentAndTitleAndSend_time(keyword, foretime, posttime, pageable);
 
-//        for(Bbs bbs: data){
-//            System.out.println();
-//            System.out.println(bbs);
-//            System.out.println();
-//        }
         map.put(nums, new ResponseEntity<>(data, HttpStatus.OK));
         return map;
         //return new ResponseEntity<>(data, HttpStatus.OK);
@@ -315,24 +305,46 @@ public class BbsController {
      **/
     @ApiOperation(value = "按照创建发布时间排序", notes = "sortBySendtime接口")
     @GetMapping("/sortBySendtime")
-    public ResponseEntity<Page<Bbs>> sortBySendtime(@RequestParam String keywords,
+    public Object sortBySendtime(@RequestParam String keywords,
                                             @RequestParam int pageindex,
                                             @RequestParam int pageSize,
                                             @RequestParam int orderIndex,
-                                            @RequestParam(required = false) String fromDate,
-                                            @RequestParam(required = false) String toDate) {
-        //排序方式
-        SortOrder order = orderIndex == 1 ? SortOrder.DESC : SortOrder.ASC;
-        //页码，页面容量
-        pageindex = pageindex == 0 ? 1 : pageindex;
-        pageSize = pageSize == 0 ? 10 : pageSize;
+                                            @RequestParam(required = false) String foretime,
+                                            @RequestParam(required = false) String posttime) {
 
-        Page<Bbs> searchResponse = bbsService.sortBySendtime(keywords,pageindex,pageSize,order,fromDate,toDate);
+        if(null == foretime && null != posttime){
+            foretime = "2015-01-01";
+        }else if(null == posttime && null != foretime){
+            posttime = "2020-05-11";
+        }else if(null == foretime && null == posttime){
+            foretime = "2015-01-01";
+            posttime = "2020-05-11";
+        }
+
+        if(foretime.length() == 0 && posttime.length() == 0){
+            foretime = "2015-01-01";
+            posttime = "2020-05-11";
+        }else if(foretime.length() != 0 && posttime.length() == 0){
+            posttime = "2020-05-11";
+        }else if(foretime.length() == 0 && posttime.length() != 0){
+            foretime = "2015-01-01";
+        }
+        //获取分页所需参数
+        pageUtil.getPageableParams(pageindex, pageSize, orderIndex);
+
+        //排序方式
+        Sort.Direction order = orderIndex == 1 ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        Page<Bbs> searchResponse = bbsService.orderByField(keywords,pageindex,pageSize,order,foretime,posttime,"send_time");
+
+        List<BbsDTO> data = bbsUtil.pageToList(searchResponse);
+        long totalElements = searchResponse.getTotalElements();
+        int totalPages = searchResponse.getTotalPages();
 
         if(searchResponse != null){
-            return new ResponseEntity<>(searchResponse, HttpStatus.OK);
+            return new ResultUtil().pageSuccess(data, totalElements, totalPages);
         }else{
-            return null;
+            return new ResultUtil().failed();
         }
     }
 

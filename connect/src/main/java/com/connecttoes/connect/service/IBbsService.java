@@ -25,7 +25,7 @@ public interface IBbsService {
 
     Page<Bbs> orderByLatestReplyTime(String keywords, int pageIndex, int pageSize, Sort.Direction sortOrder, String foretime, String posttime);
 
-    Page<Bbs> orderByReplyCount(String keywords, int pageIndex, int pageSize, Sort.Direction sortOrder, String foretime, String posttime);
+    Page<Bbs> orderByField(String keywords, int pageIndex, int pageSize, Sort.Direction sortOrder, String foretime, String posttime,String field);
 
     Page<Bbs> sortBySendtime(String keywords, int pageIndex, int pageSize, SortOrder sortOrder, String from, String to);
 
