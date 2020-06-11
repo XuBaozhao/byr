@@ -77,7 +77,7 @@ public class ResultUtil implements Serializable {
      * @param data
      * @return
      */
-    public ResultUtil pageSuccess(List data, int totalElements, int totalPages){
+    public ResultUtil pageSuccess(List data, long totalElements, int totalPages){
         Map<String, Object> result = new HashMap<>(5);
         result.put("totalElements",totalElements);
         result.put("totalPages", totalPages);
