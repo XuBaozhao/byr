@@ -222,7 +222,7 @@ public class BbsController {
                                     @RequestParam int pageindex,
                                     @RequestParam int pageSize,
                                     @RequestParam int orderIndex) {
-        
+
         if(redisTemplate.opsForValue().get(keywords) == null){
             redisTemplate.opsForValue().set(keywords, 1);
         }else{
@@ -315,8 +315,8 @@ public class BbsController {
                                             @RequestParam int pageindex,
                                             @RequestParam int pageSize,
                                             @RequestParam int orderIndex,
-                                            @RequestParam(required = false) String foretime,
-                                            @RequestParam(required = false) String posttime) {
+                                            @RequestParam(required = false) String fromDate,
+                                            @RequestParam(required = false) String toDate) {
 
         if(redisTemplate.opsForValue().get(keywords) == null){
             redisTemplate.opsForValue().set(keywords, 1);
@@ -324,22 +324,22 @@ public class BbsController {
             redisTemplate.boundValueOps(keywords).increment(1);
         }
 
-        if(null == foretime && null != posttime){
-            foretime = "2015-01-01";
-        }else if(null == posttime && null != foretime){
-            posttime = "2020-05-11";
-        }else if(null == foretime && null == posttime){
-            foretime = "2015-01-01";
-            posttime = "2020-05-11";
+        if(null == fromDate && null != toDate){
+            fromDate = "2015-01-01";
+        }else if(null == toDate && null != fromDate){
+            toDate = "2020-05-11";
+        }else if(null == fromDate && null == toDate){
+            fromDate = "2015-01-01";
+            toDate = "2020-05-11";
         }
 
-        if(foretime.length() == 0 && posttime.length() == 0){
-            foretime = "2015-01-01";
-            posttime = "2020-05-11";
-        }else if(foretime.length() != 0 && posttime.length() == 0){
-            posttime = "2020-05-11";
-        }else if(foretime.length() == 0 && posttime.length() != 0){
-            foretime = "2015-01-01";
+        if(fromDate.length() == 0 && toDate.length() == 0){
+            fromDate = "2015-01-01";
+            toDate = "2020-05-11";
+        }else if(fromDate.length() != 0 && toDate.length() == 0){
+            toDate = "2020-05-11";
+        }else if(fromDate.length() == 0 && toDate.length() != 0){
+            fromDate = "2015-01-01";
         }
         //获取分页所需参数
         pageUtil.getPageableParams(pageindex, pageSize, orderIndex);
@@ -347,7 +347,7 @@ public class BbsController {
         //排序方式
         Sort.Direction order = orderIndex == 1 ? Sort.Direction.DESC : Sort.Direction.ASC;
 
-        Page<Bbs> searchResponse = bbsService.orderByField(keywords,pageindex,pageSize,order,foretime,posttime,"send_time");
+        Page<Bbs> searchResponse = bbsService.orderByField(keywords,pageindex,pageSize,order,fromDate,toDate,"send_time");
 
         List<BbsDTO> data = bbsUtil.pageToList(searchResponse);
         long totalElements = searchResponse.getTotalElements();
